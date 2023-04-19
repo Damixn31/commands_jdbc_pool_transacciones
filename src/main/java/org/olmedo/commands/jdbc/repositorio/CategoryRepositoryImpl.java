@@ -7,9 +7,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryRepositoryImpl implements Repositorio<Category> {
+
     private Connection conn;
 
     public CategoryRepositoryImpl(Connection conn) {
+        this.conn = conn;
+    }
+
+    public CategoryRepositoryImpl() {}
+
+    public Connection getConn() {
+    return conn;
+  }
+
+   public void setConn(Connection conn) {
         this.conn = conn;
     }
 

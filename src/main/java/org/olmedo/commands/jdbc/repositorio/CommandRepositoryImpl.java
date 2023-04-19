@@ -15,6 +15,18 @@ public class CommandRepositoryImpl implements Repositorio<Command> {
         this.conn = conn;
     }
 
+    public CommandRepositoryImpl() {}
+
+    public Connection getConn() {
+    return conn;
+  }
+
+    public void setConn(Connection conn) {
+    this.conn = conn;
+  }
+
+
+
     @Override
     public List<Command> findAll() throws SQLException {
         List<Command> commands = new ArrayList<>();

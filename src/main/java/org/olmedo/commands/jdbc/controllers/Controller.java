@@ -5,6 +5,8 @@ import org.olmedo.commands.jdbc.models.Command;
 import org.olmedo.commands.jdbc.repositorio.CategoryRepositoryImpl;
 import org.olmedo.commands.jdbc.repositorio.CommandRepositoryImpl;
 import org.olmedo.commands.jdbc.repositorio.Repositorio;
+import org.olmedo.commands.jdbc.service.CatalogueService;
+import org.olmedo.commands.jdbc.service.Service;
 import org.olmedo.commands.jdbc.utils.ConexionBaseDeDatos;
 
 import java.sql.Connection;
@@ -16,46 +18,27 @@ import java.util.Date;
 public class Controller {
     public static void main(String[] args) throws SQLException {
 
-        try (Connection conn = ConexionBaseDeDatos.getConnection()) {
+        Service service = new CatalogueService();
 
-            if (conn.getAutoCommit()) {
-                conn.setAutoCommit(false);
-            }
+        System.out.println("================== findAll ====================");
+        service.list().forEach(System.out::println);
 
-            try {
-                Repositorio<Category> categoryRepository = new CategoryRepositoryImpl(conn);
-                System.out.println("==================== Insert new Category ====================");
-                Repositorio<Command> repositorio = new CommandRepositoryImpl(conn);
-                Category category = new Category();
-                category.setName("Búsqueda y Filtrado de Archivos");
-                Category newCategory = categoryRepository.save(category);
-                System.out.println("Category save succesfull" + newCategory.getId());
-
-                System.out.println("================== findAll ====================");
-                repositorio.findAll().forEach(System.out::println);
-
-                System.out.println("================== byId ====================");
-                System.out.println(repositorio.byId(5L));
-
-                System.out.println("================== New Commands ====================");
-                Command command = new Command();
-                command.setName("find");
-                command.setDescription("Busca archivos o directorios que cumplan ciertas condiciones");
-                command.setExample("find /home/user -name ");
-                command.setRegistrationDate(new Date());
+        Category category = new Category();
+        category.setName("Compresión y Descompresión");
 
 
-                command.setCategory(newCategory);
+        Command command = new Command();
+        command.setName("unzip");
+        command.setDescription("Descomprime archivos");
+        command.setExample("unzip archivo.zip");
+        command.setRegistrationDate(new Date());
 
-                repositorio.save(command);
-                System.out.println("Command save succesfull" + command.getId());
-                repositorio.findAll().forEach(System.out::println);
+        service.saveCommandCategory(command, category);
 
-                conn.commit();
-            } catch (SQLException e) {
-                conn.rollback();
-                e.printStackTrace();
-            }
-        }
+        System.out.println("Command save succesfull " + command.getId());
+        service.list().forEach(System.out::println);
+
+
     }
 }
+
